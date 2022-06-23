@@ -15,7 +15,8 @@ class BaseModule(pl.LightningModule):
         self.config = config
         self.model = AutoModelForSequenceClassification.from_pretrained(config['model_name'], num_labels=2,
                                                                         ignore_mismatched_sizes=True)
-        self.test_list = []
+        self.test_list_logits = []
+        self.test_list_labels = []
 
     def load_ckpt(self,path):
         model_dict = torch.load(path)['state_dict']
@@ -53,32 +54,46 @@ class BaseModule(pl.LightningModule):
         return output
 
     def training_step(self, batch, batch_idx):
-        loss = self.batch_step(batch).loss
+        output = self.batch_step(batch)
+        loss = output.loss
         #accuracy = (output.logits.argmax(axis=0) == y).mean()
-        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        y = batch[-1].to(self.model.device)
+        accuracy = (output.logits.argmax(axis=1) == y).float().mean().item()
+        #self.log("performance", {"train_acc": accuracy, "train_loss": loss.item()},on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("train_acc", accuracy,on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("train_loss", loss,on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        #self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         #self.log("train_accuracy", accuracy, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
         output = self.batch_step(batch)
         loss = output.loss
-        #accuracy = (output.logits.argmax(axis=0) == y).mean()
+        y = batch[-1].to(self.model.device)
+        accuracy = (output.logits.argmax(axis=1) == y).float().mean().item()
 
-        self.log("val_loss", loss,logger=True)
+        self.log("val_acc", accuracy,on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("val_loss", loss,on_step=True, on_epoch=True, prog_bar=True, logger=True)
 
 
     def test_step(self, batch, batch_idx):
         logits = self.batch_step(batch).logits
-        self.test_list.append(logits)
+        self.test_list_logits.append(logits)
+        self.test_list_labels.append(batch[-1].to(self.model.device))
 
     def test_epoch_end(self, outputs):
-        print(self.test_list)
-        test_outputs = torch.vstack(self.test_list).cpu().numpy()
+        print("logitisti",self.test_list_logits[:10])
+        print("ererer")
+        print("lables", self.test_list_labels[:10])
+        test_outputs = torch.vstack(self.test_list_logits).cpu().numpy()
+        test_labels = torch.vstack(self.test_list_labels).cpu().numpy()[:,0]
+        
+        
         test_outputs = test_outputs.argmax(axis=1)
-        test_outputs[test_outputs == 0] = -1
-        ids = np.arange(1,test_outputs.shape[0]+1)
-        outdf = pd.DataFrame({"Id":ids,'Prediction':test_outputs})
-        outdf.to_csv('output.csv',index=False)
+
+        preds_labels = np.vstack((test_outputs,test_labels))
+        with open('test_outputs/'+ self.config["test_out_path"] + '.npy', 'wb') as f:
+            np.save(f, preds_labels)
 
     def configure_optimizers(self):
         optimizer = optim.AdamW(self.parameters(), lr=self.config['lr'])

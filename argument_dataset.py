@@ -37,13 +37,13 @@ class ArgumentDataset:
 
         self.data = self.load_data(self.df)
 
-
     def data_stats(self):
         print("The shape of the dataset is",self.df.shape)
         num_fallacies = (self.df["is_fallacy"] == 1).sum()
         num_non_fallacies = (self.df["is_fallacy"] == 0).sum()
         print("There are ",num_fallacies, "fallacies")
         print("There are ",num_non_fallacies, "non fallacies")
+
 
     def load_data(self, df):
         if df is None:

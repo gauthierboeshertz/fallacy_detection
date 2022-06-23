@@ -13,7 +13,7 @@ def train(config):
 
     model = BaseModule(config=config)
     callbacks = [EarlyStopping(monitor="val_loss", mode="min"),
-                 ModelCheckpoint(monitor='val_loss', dirpath=config['save_path'],filename="model.ckpt")]
+                 ModelCheckpoint(monitor='val_loss', dirpath=config['save_path'])]
 
     trainer = pl.Trainer(max_epochs=config['nepochs'], gpus= int(torch.cuda.is_available()), callbacks=callbacks,
                          check_val_every_n_epoch=config['val_freq'], gradient_clip_val=1)
@@ -25,7 +25,7 @@ def train(config):
     
     trainer.fit(model, train_loader, val_loader)
     
-    test_loader = ArgumentDataset(config["test_data_path"],tokenizer).get_dataloader(1,False)
+    test_loader = ArgumentDataset(config["test_data_path"],tokenizer,use_sa=config["use_sa"],use_hypothesis=config["use_hypothesis"]).get_dataloader(1,False)
     trainer.test(model,test_loader)
 
 
