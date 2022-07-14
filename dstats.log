@@ -1,0 +1,91 @@
+data stats of the combined datasets
+Train
+ df shape (8291, 5)
+Nunber of fallacies 3487
+Nunber of valid 4804
+Val
+ df shape (1036, 5)
+Nunber of fallacies 464
+Nunber of valid 572
+Test
+ df shape (1037, 5)
+Nunber of fallacies 425
+Nunber of valid 612
+data stats of the climate tests
+Train
+ df shape (6851, 6)
+Nunber of fallacies 2650
+Nunber of valid 4201
+Val
+ df shape (1713, 6)
+Nunber of fallacies 647
+Nunber of valid 1066
+Test
+ df shape (1800, 5)
+Nunber of fallacies 1079
+Nunber of valid 721
+data stats of the paper fallacies on same domain
+Train
+ df shape (3133, 5)
+Nunber of fallacies 693
+Nunber of valid 2440
+Val
+ df shape (391, 5)
+Nunber of fallacies 83
+Nunber of valid 308
+Test
+ df shape (393, 5)
+Nunber of fallacies 74
+Nunber of valid 319
+data stats of the paper fallacies on climate tests
+Train
+ df shape (4412, 6)
+Nunber of fallacies 1946
+Nunber of valid 2466
+Val
+ df shape (1104, 6)
+Nunber of fallacies 503
+Nunber of valid 601
+Test
+ df shape (1800, 5)
+Nunber of fallacies 1079
+Nunber of valid 721
+data stats of the reduced paper fallacies on climate tests
+Train
+ df shape (3133, 6)
+Nunber of fallacies 693
+Nunber of valid 2440
+Val
+ df shape (784, 6)
+Nunber of fallacies 157
+Nunber of valid 627
+Test
+ df shape (1800, 5)
+Nunber of fallacies 1079
+Nunber of valid 721
+data stats of our fallacies on same domain
+Train
+ df shape (3132, 5)
+Nunber of fallacies 691
+Nunber of valid 2441
+Val
+ df shape (391, 5)
+Nunber of fallacies 83
+Nunber of valid 308
+Test
+ df shape (392, 5)
+Nunber of fallacies 74
+Nunber of valid 318
+data stats of our fallacies on climate tests
+Train
+ df shape (3132, 6)
+Nunber of fallacies 691
+Nunber of valid 2441
+Val
+ df shape (783, 6)
+Nunber of fallacies 157
+Nunber of valid 626
+Test
+ df shape (1800, 5)
+Nunber of fallacies 1079
+Nunber of valid 721

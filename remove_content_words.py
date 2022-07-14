@@ -225,7 +225,7 @@ def mask_out_content(text, model, client, debug=True):
         if debug:
             print("before removing subphrases: ", ans)
         ans = remove_repeated_subphrases(ans, next_token_dict, prev_token_dict)
-        logger.warn("%s updated to %s", text, ans)
+        print("%s updated to %s", text, ans)
         return ans
     except:
         print("error")
@@ -286,8 +286,9 @@ if __name__ == '__main__':
     en = spacy.load('en_core_web_sm')
     stanza.download('en') 
     #stanza.install_corenlp()
-    
+
     sw_spacy = en.Defaults.stop_words
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--path", help="path for input csv file")
     parser.add_argument("-a", "--article_col_name", default='Argument',help="column which contains the main text")

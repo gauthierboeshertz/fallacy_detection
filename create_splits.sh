@@ -1,0 +1,1 @@
+python3 split_csv.py --path data/all_combined/all_arguments.csv

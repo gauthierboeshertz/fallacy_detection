@@ -13,6 +13,8 @@ import sklearn.metrics
 import logging
 import argparse
 import torch.nn.functional as F
+from sklearn.utils import compute_class_weight
+
 
 class ArgumentDataset:
 
@@ -33,6 +35,8 @@ class ArgumentDataset:
         self.tokenizer = tokenizer# AutoTokenizer.from_pretrained  (tokenizer_path, do_lower_case=True)
         special_tokens_dict = {
             'additional_special_tokens': ["[A]", "[B]", "[C]", "[D]", "[E]", "[F]", "[G]", "[H]", "[I]"]}
+        
+        #if self.use_sa :
         self.tokenizer.add_special_tokens(special_tokens_dict)
 
         self.data = self.load_data(self.df)
@@ -44,6 +48,8 @@ class ArgumentDataset:
         print("There are ",num_fallacies, "fallacies")
         print("There are ",num_non_fallacies, "non fallacies")
 
+        self.class_weights = compute_class_weight(class_weight = "balanced", classes =np.unique(self.df["is_fallacy"]),y=self.df["is_fallacy"])
+        print("Class weights",self.class_weights)
 
     def load_data(self, df):
         if df is None:
@@ -60,7 +66,6 @@ class ArgumentDataset:
         #['argument', 'sa_argument',"hypothesis", 'entry_label', 'is_fallacy']
         if self.use_sa :
             premise_list = df['sa_argument'].to_list()
-
         else:
             premise_list = df['argument'].to_list()
         
@@ -81,16 +86,18 @@ class ArgumentDataset:
             attention_mask_ids = torch.tensor([1] * (len(premise_id) ))
             if self.use_hypothesis: 
                 hypothesis_id = self.tokenizer.encode(hypothesis, add_special_tokens=False)
-                pair_token_ids = [self.tokenizer.cls_token_id] + premise_id + [
-                    self.tokenizer.sep_token_id] + hypothesis_id + [self.tokenizer.sep_token_id]
+                #pair_token_ids = [self.tokenizer.cls_token_id] + premise_id + [
+                #    self.tokenizer.sep_token_id] + hypothesis_id + [self.tokenizer.sep_token_id]
+                pair_token_ids = self.tokenizer.build_inputs_with_special_tokens(premise_id,hypothesis_id)
                 # pair_token_ids = premise_id + hypothesis_id
                 # print("max token id=", max(pair_token_ids))
                 premise_len = len(premise_id)
                 hypothesis_len = len(hypothesis_id)
 
-                segment_ids = torch.tensor(
-                    [0] * (premise_len + 2) + [1] * (hypothesis_len + 1))  # sentence 0 and sentence 1
-                attention_mask_ids = torch.tensor([1] * (premise_len + hypothesis_len + 3))  # mask padded values
+                #segment_ids = torch.tensor(
+                #    [0] * (premise_len + 2) + [1] * (hypothesis_len + 1))  # sentence 0 and sentence 1
+                segment_ids = torch.tensor(self.tokenizer.create_token_type_ids_from_sequences( premise_id,hypothesis_id))
+                attention_mask_ids = torch.tensor([1] * len(pair_token_ids) )  # mask padded values
                 if len(pair_token_ids) > MAX_LEN or len(segment_ids) > MAX_LEN or len(attention_mask_ids) > MAX_LEN:
                     continue
         

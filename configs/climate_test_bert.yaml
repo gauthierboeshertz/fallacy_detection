@@ -1,0 +1,14 @@
+nepochs: 10
+val_freq: 1
+lr: 0.00002
+save_path: "/cluster/scratch/gboeshertz/models/climate_test_bert"
+test_save_path: "models/climate_test_bert"
+model_name : "bert-base-uncased"
+tokenizer_name: "bert-base-uncased"
+batch_size: 32
+train_data_path: "data/climate_test/non_climate_train.csv"
+val_data_path: "data/climate_test/non_climate_val.csv"
+test_data_path: "data/climate_test/climate_test.csv"
+use_sa: False
+use_hypothesis: True
+test_out_path : "climate_test_bert"

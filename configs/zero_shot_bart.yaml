@@ -1,0 +1,7 @@
+model_name : "facebook/bart-large-mnli"
+train_data_path: "data/all_combined/all_arguments_train.csv"
+val_data_path: "data/all_combined/all_arguments_val.csv"
+test_data_path: "data/all_combined/all_arguments_test.csv"
+use_sa: False
+use_hypothesis: True
+test_out_path : "zero_shot_bart"

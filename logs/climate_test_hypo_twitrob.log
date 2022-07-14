@@ -1,0 +1,9 @@
+                precision    recall  f1-score   support
+
+Non-fallacious       0.50      0.95      0.65       721
+    Fallacious       0.92      0.35      0.51      1076
+
+      accuracy                           0.59      1797
+     macro avg       0.71      0.65      0.58      1797
+  weighted avg       0.75      0.59      0.57      1797
+
